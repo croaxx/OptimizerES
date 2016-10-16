@@ -71,6 +71,8 @@ auto OptimizerES::ReadSavePath(const std::string& settingFilePath)->std::string
 	getline(file, savePath); // file path description
 	getline(file, savePath);// file path
 
+	file.close();
+
 	return savePath;
 }
 

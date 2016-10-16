@@ -14,15 +14,14 @@ OptimizerESGB::OptimizerESGB(shared_ptr<ISortedFitnessTable> table,
 	OptimizerES{ table, constantsES }, _constantsESGB{ constantsESGB }, _rnd{ rnd }, _selection{ selection },
 	_recombination{ recombination }, _mutation{ mutation } {};
 
-auto OptimizerESGB::StartOptimization(const IFitness& fitObject)->shared_ptr<ISortedFitnessTable>
+auto OptimizerESGB::StartOptimization(const shared_ptr<IFitness> fitObject)->shared_ptr<ISortedFitnessTable>
 {
 	_isRunning = true;
 	_fitnessTable->Clear();
 	TableInitialization(fitObject); // populate fitness table with random individuals
 
-	// get the save path from the settings file
 	string savePath = ReadSavePath(boost::filesystem::current_path().string() + "\\OptSetting.txt");
-	// open file for writing (append lines to the end of file)
+	// open file for writing (in append to the end of file mode)
 	ofstream fileObject;
 	fileObject.open(savePath, std::ios::app);
 	if (!fileObject.is_open()) throw exception("Could not open file");
@@ -68,7 +67,7 @@ auto OptimizerESGB::StartOptimization(const IFitness& fitObject)->shared_ptr<ISo
 
 			auto mappedParams = MapLinearlyToInterval(recombined.GetParamsRef(), intervalsFrom, intervalsTo);
 			//evaluate the fitness 
-			fitnesses.push_back(fitObject.EvaluateFitness(mappedParams));
+			fitnesses.push_back(fitObject->EvaluateFitness(&mappedParams[0], mappedParams.size()));
 			OptimizerES::WriteFitnessEntryToFile(fileObject, fitnesses.back(), mappedParams, recombined.GetSigmasRef());
 			++fitCounter;
 			children.push_back(move(recombined));
@@ -89,7 +88,7 @@ auto OptimizerESGB::StartOptimization(const IFitness& fitObject)->shared_ptr<ISo
 }
 
 
-auto OptimizerESGB::TableInitialization(const IFitness& fitObj)->void
+auto OptimizerESGB::TableInitialization(const shared_ptr<IFitness> fitObj)->void
 {
 	for (unsigned i = 0; i < _constantsESGB.ParentsNumber; i++)
 	{
@@ -108,7 +107,7 @@ auto OptimizerESGB::TableInitialization(const IFitness& fitObj)->void
 
 		auto mappedParams = MapLinearlyToInterval(params, intervalsFrom, intervalsTo);
 
-		auto fitness = fitObj.EvaluateFitness(mappedParams);
+		auto fitness = fitObj->EvaluateFitness(&mappedParams[0], mappedParams.size());
 
 		_fitnessTable->AddItem(fitness, ParamsIndividual{ move(params), move(sigmas) });
 	}

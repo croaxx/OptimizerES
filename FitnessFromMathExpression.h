@@ -6,7 +6,7 @@ namespace GenericOptimizer
 	class FitnessFromMathExpression : public IFitness
 	{
 	public:
-		virtual auto IFitness::EvaluateFitness(const std::vector<double>& params) const ->double;
+		virtual auto IFitness::EvaluateFitness(const double* params, unsigned lengthParams) const ->double;
 		virtual ~FitnessFromMathExpression() {};
 	};
 }

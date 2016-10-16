@@ -6,15 +6,14 @@ using namespace HelperFunctions;
 using namespace Evolutionary;
 using namespace Parallel;
 
-auto OptimizerESP::StartOptimization(const IFitness& fitObject)->shared_ptr<ISortedFitnessTable>
+auto OptimizerESP::StartOptimization(const shared_ptr<IFitness> fitObject)->shared_ptr<ISortedFitnessTable>
 {
 	_isRunning = true;		// set state to running
 	_fitnessTable->Clear(); // clear the table from previous calculations, if any
 	ParallelTableInitialization(fitObject); // populate table with random individuals
 	
-	// get the save path from the settings file
 	string savePath = ReadSavePath(boost::filesystem::current_path().string() + "\\OptSetting.txt");
-	// open file for writing (append lines to the end of file)
+	// open file for writing (in append to the end of file mode)
 	ofstream fileObject;
 	fileObject.open(savePath, std::ios::app); 
 	if (!fileObject.is_open()) throw exception("Could not open file");
@@ -54,7 +53,7 @@ auto OptimizerESP::StartOptimization(const IFitness& fitObject)->shared_ptr<ISor
 
 			auto mappedParams = MapLinearlyToInterval(newIndividual.GetParamsRef(), intervalsFrom, intervalsTo);
 
-			auto fitness = fitObject.EvaluateFitness(mappedParams);
+			auto fitness = fitObject->EvaluateFitness(&mappedParams[0],mappedParams.size());
 
 			lock_guard<mutex> lock(_mutex);
 			if (fitCounter < _constantsES.MaxFitCalls)
@@ -83,7 +82,7 @@ auto OptimizerESP::StartOptimization(const IFitness& fitObject)->shared_ptr<ISor
 	return _fitnessTable;
 }
 
-auto OptimizerESP::ParallelTableInitialization(const IFitness& fitObj)->void
+auto OptimizerESP::ParallelTableInitialization(const shared_ptr<IFitness> fitObj)->void
 {
 	vector<thread> workerThread;
 
@@ -112,7 +111,7 @@ auto OptimizerESP::ParallelTableInitialization(const IFitness& fitObj)->void
 			auto mappedParams = MapLinearlyToInterval(params, intervalsFrom, intervalsTo);
 
 			// Evaluate fitness
-			auto fitness = fitObj.EvaluateFitness(mappedParams);
+			auto fitness = fitObj->EvaluateFitness(&mappedParams[0], mappedParams.size());
 
 			lock_guard<mutex> lock(_mutex);
 			if (individuals < _constantsESP.TableSize)

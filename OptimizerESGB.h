@@ -17,7 +17,7 @@ namespace Evolutionary
 			std::shared_ptr<BioMechanisms::ISelection> _selection;
 			std::shared_ptr<BioMechanisms::IRecombination> _recombination;
 			std::shared_ptr<BioMechanisms::IMutation> _mutation;
-			auto TableInitialization(const GenericOptimizer::IFitness& fitObj)->void;
+			auto TableInitialization(const std::shared_ptr<GenericOptimizer::IFitness> fitObj)->void;
 		public:
 			OptimizerESGB() = delete;
 
@@ -25,7 +25,7 @@ namespace Evolutionary
 				std::shared_ptr<Randomness::IRandDouble> rnd, std::shared_ptr<BioMechanisms::ISelection> selection,
 				std::shared_ptr<BioMechanisms::IRecombination> recombination, std::shared_ptr<BioMechanisms::IMutation> mutation);
 
-			virtual auto StartOptimization(const GenericOptimizer::IFitness& fitObject)->std::shared_ptr<Evolutionary::ISortedFitnessTable> override;
+			virtual auto StartOptimization(const std::shared_ptr<GenericOptimizer::IFitness> fitObject)->std::shared_ptr<Evolutionary::ISortedFitnessTable> override;
 		};
 	}
 }

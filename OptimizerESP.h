@@ -21,7 +21,7 @@ namespace Evolutionary
 			std::shared_ptr<BioMechanisms::IRecombination> _recombination;
 			std::shared_ptr<BioMechanisms::IMutation> _mutation;
 			std::mutex _mutex; // used to lock read-write access into the shared table
-			auto ParallelTableInitialization(const GenericOptimizer::IFitness& fitObj)->void;
+			auto ParallelTableInitialization(const std::shared_ptr<GenericOptimizer::IFitness> fitObj)->void;
 		public:
 			OptimizerESP(std::shared_ptr<ISortedFitnessTable> table, const ParamsES constantsES, const ParamsESP constantsESP,
 				std::shared_ptr<Randomness::IRandDouble> rnd, std::shared_ptr<BioMechanisms::ISelection> selection,
@@ -29,7 +29,7 @@ namespace Evolutionary
 				OptimizerES{ table, constantsES }, _constantsESP{ constantsESP }, _rnd{ rnd }, _selection{ selection },
 				_recombination{ recombination }, _mutation{ mutation } {};
 
-			virtual auto StartOptimization(const GenericOptimizer::IFitness& fitObject)->std::shared_ptr<Evolutionary::ISortedFitnessTable> override;
+			virtual auto StartOptimization(const std::shared_ptr<GenericOptimizer::IFitness> fitObject)->std::shared_ptr<Evolutionary::ISortedFitnessTable> override;
 
 		};
 	}

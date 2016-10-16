@@ -41,7 +41,7 @@ namespace Evolutionary
 			return _params == second._params &&  _sigmas == second._sigmas;
 		}
 
-		auto GetParamsSize() const->unsigned
+		auto GetParamsSize() const->size_t
 		{
 			return _params.size();
 		}
@@ -61,7 +61,7 @@ namespace Evolutionary
 			_params = v;
 		}
 
-		auto GetSigmasSize() const->unsigned
+		auto GetSigmasSize() const->size_t
 		{
 			return _sigmas.size();
 		}

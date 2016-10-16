@@ -1,13 +1,17 @@
-#include "FitnessFromMathExpression.h"
+#include "FitnessLibrary.h"
+#include <stdio.h>
+#include <vector>
 
-using namespace std;
 using namespace GenericOptimizer;
 
-auto FitnessFromMathExpression::EvaluateFitness(const double* params, unsigned lengthParams) const ->double
+class Fitness : public IFitness
 {
+public:
+	virtual auto IFitness::EvaluateFitness(const double* params, unsigned length) const ->double
+	{
 	double sigma = 10.0;
 	double result = 1.0;
-	for (unsigned i = 0; i < lengthParams; i++)
+	for (unsigned i = 0; i < length ; i++)
 	{
 		result *= (exp(-params[i] * params[i] / sigma)*(1 - abs(sin(2 * params[i]))));
 	}
@@ -25,5 +29,12 @@ auto FitnessFromMathExpression::EvaluateFitness(const double* params, unsigned l
 	}
 
 	return result;
-}
+	}
 
+	virtual ~Fitness () {};
+};
+
+IFitness* GenericOptimizer::GenerateFitnessObject()
+{
+	return new Fitness();
+}

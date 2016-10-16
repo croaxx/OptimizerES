@@ -29,3 +29,4 @@
 #include "EngineGeneratorESGB.h"
 #include "EngineGeneratorESP.h"
 #include "OptimizerFactory.h"
+#include "FitnessLibrary.h"

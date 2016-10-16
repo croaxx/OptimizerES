@@ -6,7 +6,7 @@ namespace GenericOptimizer
 	// Every fitness evaluator class should implement this interface
 	struct IFitness
 	{
-		virtual auto EvaluateFitness(const std::vector<double>& params) const->double = 0;
+		virtual auto EvaluateFitness(const double* params,unsigned lengthParams) const->double = 0;
 		virtual ~IFitness() {};
 	};
 }
