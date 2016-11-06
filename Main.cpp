@@ -4,26 +4,29 @@ using namespace std;
 using namespace GenericOptimizer;
 using namespace chrono;
 
-auto main()->int
+auto main() -> int
 {
-	shared_ptr<IFitness> fitnessObject(GenerateFitnessObject()); // fitness evaluation is implemented in an external .dll
+	shared_ptr<IFitness> fitnessObject { GenerateFitnessObject() }; // fitness evaluation is implemented in an external .dll
 
-	auto engine = OptimizerFactory::GenerateOptimizationEngine();
+	shared_ptr<Optimizer> engine = OptimizerFactory::GenerateOptimizationEngine(); // user sets optimization engine
 
-	printf("\nEnter the number of optimization restarts: ");
+	printf("\nEnter the number of optimization restarts: "); // get the input from user
 	unsigned restarts;
 	cin >> restarts;
 
 	vector<double> bestFitnesses(restarts);
 
-	auto start_t = high_resolution_clock::now();
+	auto start_t = high_resolution_clock::now(); // start time measurement
+
 	for (unsigned i = 0; i < restarts; i++)
 	{
-		auto result = engine->StartOptimization(fitnessObject);
-		if (!result->IsEmpty()) bestFitnesses[i] = (*result)[0].first;
+		auto result = engine -> StartOptimization(fitnessObject);
+		if (!result -> IsEmpty()) bestFitnesses[i] = (*result)[0].first;
 	}
-	auto end_t = high_resolution_clock::now();
 
+	auto end_t = high_resolution_clock::now(); // finish time measurement
+
+	// Generic optimization output
 	auto averageFit = accumulate(begin(bestFitnesses), end(bestFitnesses), 0.0) / restarts;
 	printf("Number of optimization restarts performed: %d\n", restarts);
 	printf("Best fitness found: %f\n", *max_element(begin(bestFitnesses), end(bestFitnesses)));
